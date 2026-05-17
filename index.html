@@ -592,6 +592,75 @@
   }
   .word-empty { color: #9CA3AF; font-style: italic; font-size: 12px; }
 
+  /* Word view tabs */
+  .word-tabs {
+    display: inline-flex;
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .word-tab {
+    background: white;
+    border: none;
+    padding: 3px 9px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    cursor: pointer;
+    border-left: 1px solid var(--line-soft);
+    font-family: inherit;
+  }
+  .word-tab:first-child { border-left: none; }
+  .word-tab.active { background: var(--ink); color: white; }
+  .word-tab:hover:not(.active) { background: var(--paper-warm); }
+
+  /* All-words grouped view */
+  .word-section {
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed var(--line-soft);
+  }
+  .word-section:last-child {
+    border-bottom: none;
+    margin-bottom: 4px;
+    padding-bottom: 0;
+  }
+  .word-section-head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 6px;
+  }
+  .word-section-num {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent);
+    background: #E0E7FF;
+    padding: 2px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.15s;
+  }
+  .word-section-num:hover {
+    background: var(--accent);
+    color: white;
+  }
+  .word-section-count {
+    font-size: 10px;
+    color: var(--ink-soft);
+  }
+  .word-section-title {
+    font-size: 10px;
+    color: var(--ink-soft);
+    margin-left: auto;
+    max-width: 160px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
   /* Recording */
   .rec-row {
     display: flex;
@@ -831,11 +900,15 @@
 
     <div class="sb-card">
       <div class="sb-card-head">
-        <span>📝 難念字清單 (本 slide)</span>
+        <span>📝 難念字清單</span>
+        <div class="word-tabs">
+          <button class="word-tab active" id="wordTabCurrent">本 slide</button>
+          <button class="word-tab" id="wordTabAll">全部 (0)</button>
+        </div>
       </div>
       <div class="sb-card-body">
-        <div class="word-list" id="wordList"></div>
-        <input class="word-input" id="wordInput" placeholder="輸入難念字後按 Enter…">
+        <div id="wordList"></div>
+        <input class="word-input" id="wordInput" placeholder="輸入難念字後按 Enter（記到當前 slide）…">
       </div>
     </div>
 
@@ -875,7 +948,12 @@ let state = loadState();
 function loadState() {
   try {
     const raw = localStorage.getItem(STORE_KEY);
-    if (raw) return JSON.parse(raw);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      // Backward compat: fill in fields added in later versions
+      if (parsed.wordViewMode === undefined) parsed.wordViewMode = "current";
+      return parsed;
+    }
   } catch(e) {}
   return {
     currentSlide: 1,
@@ -884,6 +962,7 @@ function loadState() {
     done: {},        // {slideNum: true}
     words: {},       // {slideNum: ["word1", "word2"]}
     scriptHidden: false,
+    wordViewMode: "current",  // "current" or "all"
   };
 }
 function saveState() {
@@ -1029,23 +1108,87 @@ function renderStats() {
 
 function renderWords() {
   const list = $("wordList");
-  const words = state.words[state.currentSlide] || [];
   list.innerHTML = "";
-  if (words.length === 0) {
-    list.appendChild(el("span", { class: "word-empty", text: "尚未記錄。輸入難念字按 Enter 加入。" }));
+  list.className = "";  // reset class (word-list was on it before)
+
+  // Update tab counts + active state
+  const curCount = (state.words[state.currentSlide] || []).length;
+  const totalCount = Object.values(state.words).reduce((a,b) => a + (b ? b.length : 0), 0);
+  $("wordTabCurrent").textContent = `本 slide (${curCount})`;
+  $("wordTabAll").textContent = `全部 (${totalCount})`;
+  $("wordTabCurrent").classList.toggle("active", state.wordViewMode === "current");
+  $("wordTabAll").classList.toggle("active", state.wordViewMode === "all");
+
+  if (state.wordViewMode === "current") {
+    list.className = "word-list";
+    const words = state.words[state.currentSlide] || [];
+    if (words.length === 0) {
+      list.appendChild(el("span", { class: "word-empty", text: "本 slide 尚未記錄。輸入難念字按 Enter 加入。" }));
+    } else {
+      words.forEach((w, i) => {
+        list.appendChild(el("span", {
+          class: "word-tag",
+          text: w,
+          title: "點擊刪除",
+          onclick: () => {
+            state.words[state.currentSlide].splice(i, 1);
+            saveState();
+            renderWords();
+            renderStats();
+          }
+        }));
+      });
+    }
   } else {
-    words.forEach((w, i) => {
-      list.appendChild(el("span", {
-        class: "word-tag",
-        text: w,
-        onclick: () => {
-          state.words[state.currentSlide].splice(i, 1);
-          saveState();
-          renderWords();
-          renderStats();
-        }
-      }));
-    });
+    // ALL mode: grouped by slide
+    const slideNums = Object.keys(state.words)
+      .filter(n => state.words[n] && state.words[n].length > 0)
+      .map(Number)
+      .sort((a, b) => a - b);
+
+    if (slideNums.length === 0) {
+      list.appendChild(el("div", { class: "word-empty", text: "尚未記錄任何難念字。切回「本 slide」加入。" }));
+    } else {
+      slideNums.forEach(n => {
+        const words = state.words[n];
+        const slideInfo = SLIDES.find(s => s.num === n);
+        const section = el("div", { class: "word-section" });
+        const head = el("div", { class: "word-section-head" }, [
+          el("span", {
+            class: "word-section-num",
+            text: `Slide ${n}`,
+            title: "點擊跳到此 slide",
+            onclick: () => {
+              state.currentSlide = n;
+              state.wordViewMode = "current";
+              saveState();
+              renderAll();
+            }
+          }),
+          el("span", { class: "word-section-count", text: `${words.length} 字` }),
+          slideInfo ? el("span", { class: "word-section-title", text: slideInfo.title.split(" — ")[0].split(":")[0].replace(/⚡|⭐|🎵|⏭/g, "").trim() }) : null
+        ]);
+        section.appendChild(head);
+
+        const wordList = el("div", { class: "word-list" });
+        words.forEach((w, i) => {
+          wordList.appendChild(el("span", {
+            class: "word-tag",
+            text: w,
+            title: "點擊刪除",
+            onclick: () => {
+              state.words[n].splice(i, 1);
+              if (state.words[n].length === 0) delete state.words[n];
+              saveState();
+              renderWords();
+              renderStats();
+            }
+          }));
+        });
+        section.appendChild(wordList);
+        list.appendChild(section);
+      });
+    }
   }
 }
 
@@ -1489,6 +1632,18 @@ $("importFile").addEventListener("change", (e) => {
   const file = e.target.files[0];
   if (file) importProgress(file);
   e.target.value = "";  // allow re-importing same file
+});
+
+// Word view mode tabs
+$("wordTabCurrent").addEventListener("click", () => {
+  state.wordViewMode = "current";
+  saveState();
+  renderWords();
+});
+$("wordTabAll").addEventListener("click", () => {
+  state.wordViewMode = "all";
+  saveState();
+  renderWords();
 });
 
 // Keyboard shortcuts

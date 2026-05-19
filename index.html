@@ -1529,6 +1529,281 @@
     margin-left: 4px;
   }
 
+  /* ═════════════ Flashcards ═════════════ */
+  .flash-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .flash-mode-tabs {
+    display: inline-flex;
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .flash-mode-btn {
+    background: white;
+    border: none;
+    padding: 8px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    cursor: pointer;
+    border-left: 1px solid var(--line-soft);
+    font-family: inherit;
+  }
+  .flash-mode-btn:first-child { border-left: none; }
+  .flash-mode-btn.active { background: var(--ink); color: white; }
+  .flash-mode-btn:hover:not(.active) { background: var(--paper-warm); }
+  .flash-progress {
+    font-size: 13px;
+    color: var(--ink-soft);
+    font-weight: 600;
+  }
+  .flash-progress strong { color: var(--green); font-size: 16px; }
+  .flash-reset {
+    background: white;
+    border: 1px solid var(--line);
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-family: inherit;
+    cursor: pointer;
+    color: var(--ink-soft);
+  }
+  .flash-reset:hover { background: var(--p1); color: white; border-color: var(--p1); }
+
+  .flash-container {
+    perspective: 1500px;
+    margin: 8px 0 16px;
+    min-height: 340px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .flashcard {
+    position: relative;
+    width: 100%;
+    max-width: 560px;
+    min-height: 320px;
+    transform-style: preserve-3d;
+    transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+  }
+  .flashcard.flipped { transform: rotateY(180deg); }
+  .flashcard-face {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border-radius: 18px;
+    padding: 32px 28px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.18);
+  }
+  .flashcard-front {
+    background: linear-gradient(135deg, #1E3A8A 0%, #1E40AF 50%, #2563EB 100%);
+    color: white;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  .flashcard-back {
+    background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+    transform: rotateY(180deg);
+    color: #78350F;
+  }
+
+  .flash-front-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    opacity: 0.7;
+    margin-bottom: 14px;
+    text-transform: uppercase;
+  }
+  .flash-front-mode-hint {
+    font-size: 13px;
+    opacity: 0.7;
+    margin-bottom: 28px;
+  }
+  .flash-keywords {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+  .flash-keyword {
+    background: rgba(255,255,255,0.16);
+    padding: 14px 22px;
+    border-radius: 10px;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    border: 1px solid rgba(255,255,255,0.18);
+  }
+  .flash-question-text {
+    font-size: 21px;
+    font-weight: 600;
+    line-height: 1.45;
+    text-align: center;
+    margin-bottom: 28px;
+    padding: 0 6px;
+  }
+  .flash-tap-hint {
+    font-size: 12px;
+    opacity: 0.6;
+    margin-top: auto;
+    letter-spacing: 0.05em;
+  }
+
+  .flash-back-id {
+    display: inline-block;
+    background: white;
+    color: #78350F;
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    margin-bottom: 4px;
+  }
+  .flash-back-topic {
+    font-size: 13px;
+    color: #92400E;
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+  .flash-back-topic .star { color: #B45309; }
+  .flash-back-divider {
+    border-top: 1px dashed rgba(180,83,9,0.3);
+    margin-bottom: 14px;
+  }
+  .flash-back-keywords {
+    font-size: 11px;
+    color: #92400E;
+    margin-bottom: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    align-items: center;
+  }
+  .flash-back-kw-tag {
+    background: rgba(180,83,9,0.15);
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-family: ui-monospace, "Menlo", monospace;
+    font-size: 11px;
+  }
+  .flash-back-oneliner {
+    background: white;
+    border-left: 4px solid #F59E0B;
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+  }
+  .flash-back-oneliner-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: #92400E;
+    letter-spacing: 0.1em;
+    margin-bottom: 4px;
+  }
+  .flash-back-oneliner-en {
+    font-size: 22px;
+    font-weight: 700;
+    color: #78350F;
+    line-height: 1.4;
+    margin-bottom: 6px;
+  }
+  .flash-back-oneliner-zh {
+    font-size: 13px;
+    color: #92400E;
+    line-height: 1.5;
+  }
+  .flash-back-oneliner-zh::before { content: "▸ "; }
+  .flash-back-full-link {
+    margin-top: auto;
+    text-align: right;
+    font-size: 12px;
+    color: var(--accent);
+    font-weight: 600;
+    text-decoration: underline;
+  }
+
+  .flash-rate-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 14px;
+  }
+  .flash-rate-btn {
+    padding: 14px 16px;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: transform 0.1s, box-shadow 0.1s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  .flash-rate-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 8px rgba(0,0,0,0.15); }
+  .flash-rate-btn:active { transform: translateY(0); }
+  .flash-rate-unknown {
+    background: #FEE2E2;
+    color: #991B1B;
+    border: 1px solid #FCA5A5;
+  }
+  .flash-rate-unknown:hover { background: #FECACA; }
+  .flash-rate-known {
+    background: #DCFCE7;
+    color: #166534;
+    border: 1px solid #86EFAC;
+  }
+  .flash-rate-known:hover { background: #BBF7D0; }
+  .flash-rate-hint {
+    text-align: center;
+    font-size: 10px;
+    margin-top: 4px;
+    color: #6B7280;
+  }
+
+  .flash-complete {
+    text-align: center;
+    padding: 40px 20px;
+    background: linear-gradient(135deg, #DCFCE7 0%, #BBF7D0 100%);
+    border-radius: 16px;
+    color: #14532D;
+  }
+  .flash-complete h3 {
+    font-size: 22px;
+    margin: 0 0 8px;
+  }
+  .flash-complete p {
+    font-size: 14px;
+    margin: 0 0 20px;
+    line-height: 1.6;
+  }
+  .flash-complete-btn {
+    background: #166534;
+    color: white;
+    border: none;
+    padding: 12px 28px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .flash-complete-btn:hover { background: #14532D; }
+
   /* Mobile */
   @media (max-width: 640px) {
     .header-row { flex-direction: column; align-items: flex-start; }
@@ -1552,6 +1827,12 @@
     .cheatsheet-en { font-size: 13px; }
     .cheatsheet-topic { font-size: 11px; }
     .oneliner-en { font-size: 17px; }
+    .flashcard { min-height: 280px; }
+    .flashcard-face { padding: 22px 18px; }
+    .flash-keyword { font-size: 22px; padding: 10px 16px; }
+    .flash-question-text { font-size: 17px; }
+    .flash-back-oneliner-en { font-size: 18px; }
+    .flash-rate-btn { font-size: 13px; padding: 12px; }
   }
 </style>
 </head>
@@ -1586,6 +1867,7 @@
     </div>
     <div class="qa-tabs">
       <button class="qa-tab active" id="qaTabCheatsheet">🌟 金句速查表 (21)</button>
+      <button class="qa-tab" id="qaTabFlash">🎴 閃卡練習</button>
       <button class="qa-tab" id="qaTabQuestions">📚 完整問題</button>
       <button class="qa-tab" id="qaTabFormulas">🚨 救命公式 (7)</button>
     </div>
@@ -1724,6 +2006,8 @@ function loadState() {
       if (parsed.wordViewMode === undefined) parsed.wordViewMode = "current";
       if (parsed.drilled === undefined) parsed.drilled = {};
       if (parsed.qaTab === undefined || parsed.qaTab === "formulas") parsed.qaTab = "cheatsheet";
+      if (parsed.flashKnown === undefined) parsed.flashKnown = {};
+      if (parsed.flashMode === undefined) parsed.flashMode = "keyword";
       return parsed;
     }
   } catch(e) {}
@@ -1736,7 +2020,9 @@ function loadState() {
     scriptHidden: false,
     wordViewMode: "current",  // "current" or "all"
     drilled: {},     // {qId: true} - drilled questions
-    qaTab: "cheatsheet",  // "cheatsheet" | "questions" | "formulas"
+    qaTab: "cheatsheet",
+    flashKnown: {},  // {qId: true} - cards marked as known
+    flashMode: "keyword",  // "keyword" or "question"
   };
 }
 function saveState() {
@@ -2395,9 +2681,258 @@ function closeQA() {
   document.body.style.overflow = "";
 }
 
+// In-memory flashcard session state (not persisted — re-shuffled each session)
+let flashSession = null;  // { deck: [qid,...], index: 0, flipped: false }
+
+function buildFlashDeck() {
+  // Include all 22 question cards. Default order: unknown first, then known
+  const allIds = QUESTIONS.map(q => q.id);
+  const unknown = allIds.filter(id => !state.flashKnown[id]);
+  const known = allIds.filter(id => state.flashKnown[id]);
+  // Fisher-Yates shuffle of unknowns
+  for (let i = unknown.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [unknown[i], unknown[j]] = [unknown[j], unknown[i]];
+  }
+  // Known go to the back, also shuffled
+  for (let i = known.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [known[i], known[j]] = [known[j], known[i]];
+  }
+  return [...unknown, ...known];
+}
+
+function startFlashSession() {
+  flashSession = {
+    deck: buildFlashDeck(),
+    index: 0,
+    flipped: false
+  };
+}
+
+function renderFlashcards(body) {
+  if (!flashSession) startFlashSession();
+
+  const knownCount = Object.values(state.flashKnown).filter(Boolean).length;
+  const total = QUESTIONS.length;
+
+  // Header
+  const header = el("div", { class: "flash-header" });
+  const modeWrap = el("div", { class: "flash-mode-tabs" });
+  modeWrap.appendChild(el("button", {
+    class: "flash-mode-btn" + (state.flashMode === "keyword" ? " active" : ""),
+    text: "🔑 看關鍵字 → 想金句",
+    onclick: () => {
+      if (state.flashMode !== "keyword") {
+        state.flashMode = "keyword";
+        flashSession.flipped = false;
+        saveState();
+        renderQA();
+      }
+    }
+  }));
+  modeWrap.appendChild(el("button", {
+    class: "flash-mode-btn" + (state.flashMode === "question" ? " active" : ""),
+    text: "❓ 看問題 → 想金句",
+    onclick: () => {
+      if (state.flashMode !== "question") {
+        state.flashMode = "question";
+        flashSession.flipped = false;
+        saveState();
+        renderQA();
+      }
+    }
+  }));
+  header.appendChild(modeWrap);
+
+  header.appendChild(el("div", {
+    class: "flash-progress",
+    html: `已熟 <strong>${knownCount}</strong> / ${total}`
+  }));
+
+  header.appendChild(el("button", {
+    class: "flash-reset",
+    text: "🔄 全部重練",
+    onclick: () => {
+      if (confirm("確定清除所有「已熟」標記，重新開始全部 22 張閃卡？")) {
+        state.flashKnown = {};
+        startFlashSession();
+        saveState();
+        renderQA();
+      }
+    }
+  }));
+  body.appendChild(header);
+
+  // Did user complete all?
+  if (knownCount >= total) {
+    body.appendChild(el("div", { class: "flash-complete", html: `
+      <h3>🎉 全部 22 張閃卡都熟了！</h3>
+      <p>你已經能聽到關鍵字就反射金句。5/25 上場時的 Q&A 你已經準備好了。<br>
+         可以打開「金句速查表」做最後一次掃描。</p>
+    `}));
+    const btn = el("button", {
+      class: "flash-complete-btn",
+      text: "🔄 想再練一次",
+      onclick: () => {
+        state.flashKnown = {};
+        startFlashSession();
+        saveState();
+        renderQA();
+      }
+    });
+    body.lastChild.appendChild(btn);
+    return;
+  }
+
+  // Get current question
+  const currentQid = flashSession.deck[flashSession.index];
+  const q = QUESTIONS.find(x => x.id === currentQid);
+
+  // Position indicator
+  body.appendChild(el("div", {
+    class: "flash-rate-hint",
+    text: `第 ${flashSession.index + 1} 張 / ${flashSession.deck.length} 張（本輪）`
+  }));
+
+  // Card container
+  const container = el("div", { class: "flash-container" });
+  const card = el("div", {
+    class: "flashcard" + (flashSession.flipped ? " flipped" : ""),
+    id: "flashCard",
+    onclick: () => {
+      flashSession.flipped = !flashSession.flipped;
+      $("flashCard").classList.toggle("flipped", flashSession.flipped);
+    }
+  });
+
+  // FRONT face
+  const front = el("div", { class: "flashcard-face flashcard-front" });
+  front.appendChild(el("div", {
+    class: "flash-front-label",
+    text: state.flashMode === "keyword" ? "🎧 聽到這幾個關鍵字" : "❓ 提問者可能說"
+  }));
+
+  if (state.flashMode === "keyword") {
+    const kwBox = el("div", { class: "flash-keywords" });
+    (q.keywords || []).slice(0, 3).forEach(kw => {
+      kwBox.appendChild(el("div", { class: "flash-keyword", text: kw }));
+    });
+    front.appendChild(kwBox);
+    front.appendChild(el("div", {
+      class: "flash-front-mode-hint",
+      text: "→ 在腦中說出英文金句"
+    }));
+  } else {
+    // Question mode
+    front.appendChild(el("div", {
+      class: "flash-question-text",
+      text: q.zh_q
+    }));
+    front.appendChild(el("div", {
+      class: "flash-front-mode-hint",
+      text: '"' + q.en + '"'
+    }));
+  }
+  front.appendChild(el("div", { class: "flash-tap-hint", text: "點擊翻面 ↻" }));
+  card.appendChild(front);
+
+  // BACK face
+  const back = el("div", { class: "flashcard-face flashcard-back" });
+  const idLine = el("div");
+  idLine.appendChild(el("span", { class: "flash-back-id", text: q.id }));
+  back.appendChild(idLine);
+  const topic = el("div", { class: "flash-back-topic", text: q.topic });
+  if (q.star) topic.appendChild(el("span", { class: "star", text: " ⭐" }));
+  back.appendChild(topic);
+  back.appendChild(el("div", { class: "flash-back-divider" }));
+
+  // Show the OTHER mode's hint on the back (so user sees both)
+  if (state.flashMode === "keyword") {
+    // Was showing keywords, on back show the question
+    back.appendChild(el("div", { class: "flash-back-keywords" }, [
+      el("span", { text: "❓ 問題：" }),
+      el("span", { style: "font-size: 12px; color: #78350F; font-weight: 500;", text: q.zh_q })
+    ]));
+  } else {
+    // Was showing question, on back show keywords
+    const kwRow = el("div", { class: "flash-back-keywords" });
+    kwRow.appendChild(el("span", { text: "🎧 關鍵字：" }));
+    (q.keywords || []).forEach(kw => {
+      kwRow.appendChild(el("span", { class: "flash-back-kw-tag", text: kw }));
+    });
+    back.appendChild(kwRow);
+  }
+
+  // The oneliner
+  const oneliner = el("div", { class: "flash-back-oneliner" });
+  oneliner.appendChild(el("div", { class: "flash-back-oneliner-label", text: "🌟 必背金句" }));
+  oneliner.appendChild(el("div", { class: "flash-back-oneliner-en", text: q.oneliner_en }));
+  oneliner.appendChild(el("div", { class: "flash-back-oneliner-zh", text: q.oneliner_zh }));
+  back.appendChild(oneliner);
+
+  // Full answer link
+  const fullLink = el("div", {
+    class: "flash-back-full-link",
+    text: "📖 看完整答案 →",
+    onclick: (e) => {
+      e.stopPropagation();
+      openQAWithQuestion(q.id);
+    }
+  });
+  back.appendChild(fullLink);
+
+  card.appendChild(back);
+  container.appendChild(card);
+  body.appendChild(container);
+
+  // Rating buttons (visible always, only really useful after flip but kept simple)
+  const ratingRow = el("div", { class: "flash-rate-row" });
+  ratingRow.appendChild(el("button", {
+    class: "flash-rate-btn flash-rate-unknown",
+    html: "❌ 不熟<br><span style='font-size:11px;font-weight:500;opacity:0.7'>晚點再見</span>",
+    onclick: () => rateCard(false)
+  }));
+  ratingRow.appendChild(el("button", {
+    class: "flash-rate-btn flash-rate-known",
+    html: "✓ 熟了<br><span style='font-size:11px;font-weight:500;opacity:0.7'>本輪移除</span>",
+    onclick: () => rateCard(true)
+  }));
+  body.appendChild(ratingRow);
+
+  body.appendChild(el("div", {
+    class: "flash-rate-hint",
+    html: "💡 翻面後再判斷。鍵盤：<kbd style='background:#E5E7EB;padding:1px 5px;border-radius:3px'>Space</kbd> 翻面 · <kbd style='background:#E5E7EB;padding:1px 5px;border-radius:3px'>1</kbd> 不熟 · <kbd style='background:#E5E7EB;padding:1px 5px;border-radius:3px'>2</kbd> 熟了"
+  }));
+}
+
+function rateCard(known) {
+  if (!flashSession) return;
+  const qid = flashSession.deck[flashSession.index];
+  if (known) {
+    state.flashKnown[qid] = true;
+    // Remove from current deck
+    flashSession.deck.splice(flashSession.index, 1);
+    if (flashSession.index >= flashSession.deck.length) {
+      flashSession.index = 0;
+    }
+  } else {
+    // Move card to back of deck (so it comes around again later)
+    flashSession.deck.push(flashSession.deck.splice(flashSession.index, 1)[0]);
+    // index stays the same — next card slides into place
+    if (flashSession.index >= flashSession.deck.length) {
+      flashSession.index = 0;
+    }
+  }
+  flashSession.flipped = false;
+  saveState();
+  renderQA();
+}
+
 function renderQA() {
   // Update tab states
   $("qaTabCheatsheet").classList.toggle("active", state.qaTab === "cheatsheet");
+  $("qaTabFlash").classList.toggle("active", state.qaTab === "flash");
   $("qaTabQuestions").classList.toggle("active", state.qaTab === "questions");
   $("qaTabFormulas").classList.toggle("active", state.qaTab === "formulas");
 
@@ -2406,6 +2941,8 @@ function renderQA() {
 
   if (state.qaTab === "cheatsheet") {
     renderCheatsheet(body);
+  } else if (state.qaTab === "flash") {
+    renderFlashcards(body);
   } else if (state.qaTab === "formulas") {
     body.appendChild(el("div", {
       class: "qa-warning",
@@ -2686,6 +3223,8 @@ function exportProgress() {
       words: state.words,
       scriptHidden: state.scriptHidden,
       drilled: state.drilled || {},
+      flashKnown: state.flashKnown || {},
+      flashMode: state.flashMode || "keyword",
     }
   };
   const json = JSON.stringify(payload, null, 2);
@@ -2721,6 +3260,7 @@ function importProgress(file) {
       const done = Object.values(data.state.done || {}).filter(Boolean).length;
       const wordCount = Object.values(data.state.words || {}).reduce((a,b) => a + (b ? b.length : 0), 0);
       const drilledCount = Object.values(data.state.drilled || {}).filter(Boolean).length;
+      const flashCount = Object.values(data.state.flashKnown || {}).filter(Boolean).length;
       const expTime = data.exportedAt ? new Date(data.exportedAt).toLocaleString("zh-TW") : "未知";
       const device = data.deviceHint === "mobile" ? "📱 手機" : "💻 電腦";
 
@@ -2731,6 +3271,7 @@ function importProgress(file) {
         "• 已完成 slide：" + done + " 個\n" +
         "• 難念字總數：" + wordCount + " 個\n" +
         "• 已演練 Q&A：" + drilledCount + " 題\n" +
+        "• 閃卡已熟：" + flashCount + " 張\n" +
         "• 目前位置：Day " + (data.state.currentDay || "?") + " · Slide " + (data.state.currentSlide || "?") + "\n\n" +
         "⚠️ 這會【覆蓋】目前裝置的進度。確定嗎？";
 
@@ -2744,6 +3285,8 @@ function importProgress(file) {
       state.words = data.state.words || {};
       state.scriptHidden = !!data.state.scriptHidden;
       state.drilled = data.state.drilled || {};
+      state.flashKnown = data.state.flashKnown || {};
+      state.flashMode = data.state.flashMode || "keyword";
       saveState();
       renderAll();
       alert("✅ 匯入成功！");
@@ -2827,6 +3370,13 @@ $("qaTabCheatsheet").addEventListener("click", () => {
   saveState();
   renderQA();
 });
+$("qaTabFlash").addEventListener("click", () => {
+  state.qaTab = "flash";
+  // Reset session on tab entry so we always shuffle fresh
+  startFlashSession();
+  saveState();
+  renderQA();
+});
 $("qaTabQuestions").addEventListener("click", () => {
   state.qaTab = "questions";
   saveState();
@@ -2855,6 +3405,21 @@ document.addEventListener("keydown", (e) => {
       closeQA();
       return;
     }
+  }
+  // Flashcard shortcuts (when QA modal is open on flash tab)
+  if ($("qaOverlay").classList.contains("open") && state.qaTab === "flash" && flashSession) {
+    if (e.key === " ") {
+      e.preventDefault();
+      const card = document.getElementById("flashCard");
+      if (card) {
+        flashSession.flipped = !flashSession.flipped;
+        card.classList.toggle("flipped", flashSession.flipped);
+      }
+      return;
+    }
+    if (e.key === "1") { e.preventDefault(); rateCard(false); return; }
+    if (e.key === "2") { e.preventDefault(); rateCard(true); return; }
+    // Arrow keys still allowed for cycling
   }
   // Don't navigate slides while QA modal is open
   if ($("qaOverlay").classList.contains("open")) return;
